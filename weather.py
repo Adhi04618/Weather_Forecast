@@ -17,7 +17,7 @@ choice = st.sidebar.selectbox("Select Activities", activities)
 if choice == 'Introduction':
     st.markdown(" Enhancing Your Weather-Related Decision Making")
     st.markdown("Weather plays a crucial role in our daily lives, influencing our activities, travel plans, and even our safety. Having access to accurate and up-to-date weather information is invaluable. This is where the Weather Forecasting App steps in, providing users with a comprehensive and reliable tool to stay informed about current and future weather conditions. The Weather Forecasting App is an innovative and user-friendly application designed to deliver precise weather forecasts directly to your fingertips. Leveraging advanced meteorological algorithms and real-time data from trusted sources, this app offers an intuitive and personalized weather experience. Users can access a wide range of features, including hourly and extended forecasts, severe weather alerts, radar imagery, and customizable notifications. With its sleek interface and interactive maps, the Weather Forecasting App allows users to visualize weather patterns and track storms with ease. The app also includes additional features like UV index, air quality information, and sunrise/sunset times to ensure users are well-prepared for their daily routines or outdoor activities. The Weather Forecasting App caters to a diverse range of users, from casual weather enthusiasts to professionals requiring precise weather information. It empowers individuals to make informed decisions, such as planning outdoor events, adjusting travel schedules, or preparing for severe weather events. In summary, the Weather Forecasting App is a powerful tool that combines accuracy, convenience, and comprehensive weather data to enhance your weather-related decision making. Stay ahead of changing conditions and maximize your safety and comfort with this essential app at your disposal.")
-    st.subheader("Done By ... ")
+    st.subheader("Done By Aditya S ")
     
 # ==========================================================================================================================
 
@@ -165,6 +165,6 @@ elif choice == 'Forecast':
 
 # ============================================================================================
 elif choice == "About Us":
-    st.header("CREATED BY _**NAME - Roll no**_")
-    st.subheader("UNDER THE GUIDENCE OF _**Guide name**_")
+    st.header("CREATED BY _**Aditya.S - 21BIT003**_")
+    st.subheader("UNDER THE GUIDENCE OF _**Ms.U.Ramya MCA**_")
 
