@@ -8,20 +8,19 @@ import pickle
 from PIL import Image
 import time
 
-st.set_page_config(page_title='Weather Forecasting Prediction System', page_icon=":rainbow:")
 
-st.title("Weather Forecasting System 🌞🍃")
+# Security
+#passlib,hashlib,bcrypt,scrypt
+import hashlib
+def make_hashes(password):
+        return hashlib.sha256(str.encode(password)).hexdigest()
 
-activities = ["Introduction", "Forecast","About Us"]
-choice = st.sidebar.selectbox("Select Activities", activities)
-if choice == 'Introduction':
-    st.markdown(" Enhancing Your Weather-Related Decision Making")
-    st.markdown("Weather plays a crucial role in our daily lives, influencing our activities, travel plans, and even our safety. Having access to accurate and up-to-date weather information is invaluable. This is where the Weather Forecasting App steps in, providing users with a comprehensive and reliable tool to stay informed about current and future weather conditions. The Weather Forecasting App is an innovative and user-friendly application designed to deliver precise weather forecasts directly to your fingertips. Leveraging advanced meteorological algorithms and real-time data from trusted sources, this app offers an intuitive and personalized weather experience. Users can access a wide range of features, including hourly and extended forecasts, severe weather alerts, radar imagery, and customizable notifications. With its sleek interface and interactive maps, the Weather Forecasting App allows users to visualize weather patterns and track storms with ease. The app also includes additional features like UV index, air quality information, and sunrise/sunset times to ensure users are well-prepared for their daily routines or outdoor activities. The Weather Forecasting App caters to a diverse range of users, from casual weather enthusiasts to professionals requiring precise weather information. It empowers individuals to make informed decisions, such as planning outdoor events, adjusting travel schedules, or preparing for severe weather events. In summary, the Weather Forecasting App is a powerful tool that combines accuracy, convenience, and comprehensive weather data to enhance your weather-related decision making. Stay ahead of changing conditions and maximize your safety and comfort with this essential app at your disposal.")
-    st.subheader("Done By Aditya S ")
-    
-# ==========================================================================================================================
+def check_hashes(password,hashed_text):
+        if make_hashes(password) == hashed_text:
+                return hashed_text
+        return False
 
-elif choice == 'Forecast':
+def forecast():
     city = st.text_input("ENTER THE NAME OF THE CITY ")
     unit = st.selectbox("SELECT TEMPERATURE UNIT ", ["Celsius", "Fahrenheit"])
     speed = st.selectbox("SELECT WIND SPEED UNIT ", ["Metre/sec", "Kilometre/hour"])
@@ -163,8 +162,103 @@ elif choice == 'Forecast':
         except KeyError:
             st.error(" Invalid city!!  Please try again !!")
 
-# ============================================================================================
-elif choice == "About Us":
-    st.header("CREATED BY _**Aditya.S - 21BIT003**_")
-    st.subheader("UNDER THE GUIDENCE OF _**Ms.U.Ramya MCA**_")
 
+# DB Management
+import sqlite3 
+conn = sqlite3.connect('data.db')
+c = conn.cursor()
+# DB  Functions
+def create_usertable():
+        c.execute('CREATE TABLE IF NOT EXISTS userstable(username TEXT,password TEXT)')
+
+
+def add_userdata(username,password):
+        c.execute('INSERT INTO userstable(username,password) VALUES (?,?)',(username,password))
+        conn.commit()
+
+def login_user(username,password):
+        c.execute('SELECT * FROM userstable WHERE username =? AND password = ?',(username,password))
+        data = c.fetchall()
+        return data
+
+
+def view_all_users():
+        c.execute('SELECT * FROM userstable')
+        data = c.fetchall()
+        return data
+
+
+
+def main():
+
+        st.set_page_config(page_title='Weather Forecasting Prediction System', page_icon=":rainbow:")
+        st.title("Weather Forecasting System 🌞🍃")
+        activities = ["Introduction", "ADMIN LOGIN","USER LOGIN","SIGN UP","About Us"]
+        choice = st.sidebar.selectbox("Select Activities", activities)
+        if choice == 'Introduction':
+            st.markdown(" Enhancing Your Weather-Related Decision Making")
+            st.markdown("Weather plays a crucial role in our daily lives, influencing our activities, travel plans, and even our safety. Having access to accurate and up-to-date weather information is invaluable. This is where the Weather Forecasting App steps in, providing users with a comprehensive and reliable tool to stay informed about current and future weather conditions. The Weather Forecasting App is an innovative and user-friendly application designed to deliver precise weather forecasts directly to your fingertips. Leveraging advanced meteorological algorithms and real-time data from trusted sources, this app offers an intuitive and personalized weather experience. Users can access a wide range of features, including hourly and extended forecasts, severe weather alerts, radar imagery, and customizable notifications. With its sleek interface and interactive maps, the Weather Forecasting App allows users to visualize weather patterns and track storms with ease. The app also includes additional features like UV index, air quality information, and sunrise/sunset times to ensure users are well-prepared for their daily routines or outdoor activities. The Weather Forecasting App caters to a diverse range of users, from casual weather enthusiasts to professionals requiring precise weather information. It empowers individuals to make informed decisions, such as planning outdoor events, adjusting travel schedules, or preparing for severe weather events. In summary, the Weather Forecasting App is a powerful tool that combines accuracy, convenience, and comprehensive weather data to enhance your weather-related decision making. Stay ahead of changing conditions and maximize your safety and comfort with this essential app at your disposal.")
+            st.subheader("Done By ADITYA S  ")
+            time.sleep(3)
+            st.warning("Goto Menu Section To Login !")
+
+
+        elif choice == "ADMIN LOGIN":
+                 st.markdown("<h1 style='text-align: center;'>Admin Login Section</h1>", unsafe_allow_html=True)
+                 user = st.sidebar.text_input('Username')
+                 passwd = st.sidebar.text_input('Password',type='password')
+                 if st.sidebar.checkbox("LOGIN"):
+
+                         if user == "Admin" and passwd == 'admin123':
+
+                                                st.success("Logged In as {}".format(user))
+                                                st.subheader("User Profiles")
+                                                user_result = view_all_users()
+                                                clean_db = pd.DataFrame(user_result,columns=["Username","Password"])
+                                                st.dataframe(clean_db)
+                                                forecast()
+                         else:
+                                st.warning("Incorrect Admin Username/Password")
+          
+                         
+                        
+
+        elif choice == "USER LOGIN":
+                st.markdown("<h1 style='text-align: center;'>User Login Section</h1>", unsafe_allow_html=True)
+                username = st.sidebar.text_input("User Name")
+                password = st.sidebar.text_input("Password",type='password')
+                if st.sidebar.checkbox("LOGIN"):
+                        # if password == '12345':
+                        create_usertable()
+                        hashed_pswd = make_hashes(password)
+
+                        result = login_user(username,check_hashes(password,hashed_pswd))
+                        if result:
+
+                                st.success("Logged In as {}".format(username))
+                                forecast()
+                        else:
+                                st.warning("Incorrect Username/Password")
+                                st.warning("Please Create an Account if not Created")
+
+
+        elif choice == "SIGN UP":
+                st.subheader("Create New Account")
+                new_user = st.text_input("Username")
+                new_password = st.text_input("Password",type='password')
+
+                if st.button("SIGN UP"):
+                        create_usertable()
+                        add_userdata(new_user,make_hashes(new_password))
+                        st.success("You have successfully created a valid Account")
+                        st.info("Go to User Login Menu to login")
+
+        elif choice == "ABOUT US":
+                st.header("CREATED BY _**ADITYA S **_")
+                st.subheader("UNDER THE GUIDENCE OF _**GUIDE DETAILS**_")
+
+
+# ==========================================================================================================================
+
+if __name__ == '__main__':
+        main()
